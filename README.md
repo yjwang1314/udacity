@@ -1,2 +1,2 @@
 # udacity
-udacity project
+The study notes of data analyse course.
