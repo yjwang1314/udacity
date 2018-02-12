@@ -7,7 +7,11 @@ Created on Sun Feb 11 15:30:17 2018
 
 import csv
 from pymongo import MongoClient
+from Pools import pools
 
+client = MongoClient(pools.MONGO_SERVER,pools.MONGO_PORT)
+db = client[pools.MONGO_DB]
+db.authenticate(pools.MONGO_USERNAME, pools.MONGO_PWD)
 
 filename = 'cities_1.csv'
 data = {}
@@ -33,13 +37,11 @@ with open(filename,'rb') as f:
         data['country'] = row['country'].split('/')[-1]
         data['isPartOf'] = isPartOf
         data['population'] = row['populationTotal']
-        # db.uda.insert(data)
+        db.uda.insert(data)
         n += 1
-        data_list.append(data)
+        # data_list.append(data)
         
         
-client = MongoClient('45.62.113.172',27017)
-db = client.db_news
-db.authenticate()
+
         
-db.uda.insert_many(data_list)
+# db.uda.insert_many(data_list)
