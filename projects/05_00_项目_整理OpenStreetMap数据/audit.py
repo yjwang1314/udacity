@@ -21,7 +21,7 @@ from collections import defaultdict
 import re
 import pprint
 
-OSMFILE = "map_sample.osm"
+OSMFILE = "map.osm"
 street_type_re = re.compile(r'\b\S+\.?$', re.IGNORECASE)
 
 
@@ -33,8 +33,20 @@ mapping = { "St": "Street",
             "St.": "Street",
             "Rd": "Road",
             "Rd.": "Road",
+            "road": "Road",
             "Ave": "Avenue",
-            "Ave.": "Avenue"
+            "Ave.": "Avenue",
+            "ave": "Avenue",
+            "Sheng": "Province",
+            "Shi": "City",
+            "Qu": "District",
+            "Lu": "Road",
+            "Jie": "Street",
+            "Xi": "West",
+            "N": "North",
+            "S": "South", 
+            "E": "East",
+            "W": "West"
             }
 
 
@@ -67,7 +79,8 @@ def update_name(name, mapping):
 
     # YOUR CODE HERE
     for i in mapping.keys():
-        if any(map(lambda x: i == x, name.split())):
+        # if any(map(lambda x: i == x, name.split())):
+        if i == name.split()[-1]:
             # print name, i
             name = name.replace(i, mapping[i])
 
@@ -79,18 +92,11 @@ def test():
     # assert len(st_types) == 3
     pprint.pprint(dict(st_types))
 
-    '''
+    
     for st_type, ways in st_types.iteritems():
         for name in ways:
-            
-            # better_name = update_name(name, mapping)
+            better_name = update_name(name, mapping)
             print name, "=>", better_name
-            if name == "West Lexington St.":
-                assert better_name == "West Lexington Street"
-            if name == "Baldwin Rd.":
-                assert better_name == "Baldwin Road"
-    '''
-
 
 if __name__ == '__main__':
     test()
