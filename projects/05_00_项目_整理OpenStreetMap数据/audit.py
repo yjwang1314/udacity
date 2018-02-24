@@ -21,8 +21,8 @@ from collections import defaultdict
 import re
 import pprint
 
-OSMFILE = "map.osm"
-street_type_re = re.compile(r'\b\S+\.?$', re.IGNORECASE)
+OSMFILE = "map_sample.osm"
+street_type_re = re.compile(r'\b\S+\.?$', re.IGNORECASE) # 地址最后一个词
 
 
 expected = ["Street", "Avenue", "Boulevard", "Drive", "Court", "Place", "Square", "Lane", "Road", 
@@ -78,12 +78,9 @@ def audit(osmfile):
 def update_name(name, mapping):
 
     # YOUR CODE HERE
-    for i in mapping.keys():
-        # if any(map(lambda x: i == x, name.split())):
-        if i == name.split()[-1]:
-            # print name, i
-            name = name.replace(i, mapping[i])
-
+    match = re.search(street_type_re,name)
+    if match and match.group() in mapping.keys():
+        name = re.sub(street_type_re, mapping[match.group()], name)
     return name
 
 
@@ -91,8 +88,6 @@ def test():
     st_types = audit(OSMFILE)
     # assert len(st_types) == 3
     pprint.pprint(dict(st_types))
-
-    
     for st_type, ways in st_types.iteritems():
         for name in ways:
             better_name = update_name(name, mapping)
