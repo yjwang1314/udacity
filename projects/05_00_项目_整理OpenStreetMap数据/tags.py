@@ -17,7 +17,7 @@ def count_tags(filename):
     return tags
 
 def test():
-    tags = count_tags('map_sample.osm')
+    tags = count_tags('map.osm')
     pprint.pprint(tags)    
     
 if __name__ == "__main__":

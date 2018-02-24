@@ -39,7 +39,7 @@ def process_map(filename):
 
 
 def test():
-    keys = process_map('map_sample.osm')
+    keys = process_map('map.osm')
     pprint.pprint(keys)
     
 if __name__ == "__main__":
