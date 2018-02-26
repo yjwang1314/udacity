@@ -25,10 +25,11 @@ changes = {u'中国农业银行': u'农业银行',
            u'中国民生银行': u'民生银行',
            "McDonald's": u'麦当劳',
            'McDonald': u'麦当劳',
+           'McDonalds': u'麦当劳',
            u"金拱门 麥當勞 Mc'Donald": u'麦当劳',
            'Pizza Hut': u'必胜客',
            'KFC': u'肯德基',
-           'Subway': u'赛百味'} 
+           'Subway': u'赛百味'}
 
 # UPDATE THIS VARIABLE
 mapping = { "St": "Street",
@@ -49,7 +50,7 @@ mapping = { "St": "Street",
             "Nan": "South",
             "Bei": "North",
             "N": "North",
-            "S": "South", 
+            "S": "South",
             "E": "East",
             "W": "West"
             }
@@ -60,7 +61,7 @@ def shape_element(element):
         # YOUR CODE HERE
         created = {}
         node_refs = []
-        
+
         attrib = element.attrib
         for field in CREATED:
             created[field] = attrib[field]
@@ -71,7 +72,7 @@ def shape_element(element):
         if 'visible' in attrib.keys():
             node['visible'] = attrib['visible']
         node['id'] = attrib['id']
-        
+
         if len(element.getchildren()):
             address = {}
             for elem in element.getchildren():
