@@ -31,12 +31,65 @@ plt.show()
 ### your code here!  name your classifier object clf if you want the 
 ### visualization code (prettyPicture) to show you the decision boundary
 
+# knn
+from sklearn.neighbors import nearest_centroid
+from time import time
+clf = nearest_centroid.NearestCentroid()
 
+t0 = time()
+clf.fit(features_train, labels_train)
+print "training time:", round(time()-t0, 3), "s"
 
+t0 = time()
+clf.predict(features_test)
+print "predict time:", round(time()-t0, 3), "s"
+                             
+acc = clf.score(features_test, labels_test)
+print 'accuracy:', round(acc, 4) # 0.908
 
+try:
+    prettyPicture(clf, features_test, labels_test)
+except NameError:
+    pass
+################################################################################
+# random forest
 
+from sklearn.ensemble import RandomForestClassifier
 
+clf = RandomForestClassifier(n_estimators=10)
 
+t0 = time()
+clf.fit(features_train, labels_train)
+print "training time:", round(time()-t0, 3), "s"
+
+t0 = time()
+clf.predict(features_test)
+print "predict time:", round(time()-t0, 3), "s"
+                             
+acc = clf.score(features_test, labels_test)
+print 'accuracy:', round(acc, 4) # 0.936
+
+try:
+    prettyPicture(clf, features_test, labels_test)
+except NameError:
+    pass
+
+################################################################################
+# adaboost
+from sklearn.ensemble import AdaBoostClassifier
+
+clf = AdaBoostClassifier(n_estimators=100)
+
+t0 = time()
+clf.fit(features_train, labels_train)
+print "training time:", round(time()-t0, 3), "s"
+
+t0 = time()
+clf.predict(features_test)
+print "predict time:", round(time()-t0, 3), "s"
+                             
+acc = clf.score(features_test, labels_test)
+print 'accuracy:', round(acc, 4) # 0.924
 
 try:
     prettyPicture(clf, features_test, labels_test)
