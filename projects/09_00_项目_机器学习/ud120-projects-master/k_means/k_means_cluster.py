@@ -87,6 +87,7 @@ while 'NaN' in ESP:
     ESP.remove('NaN')
 min(ESP)
 max(ESP)
+ESP = map(float, ESP)
 
 # salary特征取的最大值和最小值
 salary_ls = map(lambda x: data_dict[x]['salary'], data_dict.keys())
@@ -94,3 +95,12 @@ while 'NaN' in salary_ls:
     salary_ls.remove('NaN')
 min(salary_ls)
 max(salary_ls)
+salary_ls = map(float, salary_ls)
+
+from sklearn.preprocessing import MinMaxScaler
+scaler = MinMaxScaler()
+scaler_ESP = scaler.fit(ESP) # 特征缩放
+scaler_ESP.transform([1000000.0]) # 缩放后的值
+
+salary_ESP = scaler.fit(salary_ls) # 特征缩放
+salary_ESP.transform([200000.0]) # 缩放后的值
