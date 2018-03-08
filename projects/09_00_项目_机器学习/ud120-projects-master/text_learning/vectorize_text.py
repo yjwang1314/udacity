@@ -42,8 +42,8 @@ for name, from_person in [("sara", from_sara), ("chris", from_chris)]:
         ### only look at first 200 emails when developing
         ### once everything is working, remove this line to run over full dataset
         temp_counter += 1
-        if temp_counter < 200:
-        # if temp_counter:
+        # if temp_counter < 200:
+        if temp_counter:
             path = os.path.join('..', path[:-1])
             print path
             email = open(path, "r")
@@ -81,16 +81,18 @@ sw = stopwords.words('english')
 ### in Part 4, do TfIdf vectorization here
 from sklearn.feature_extraction.text import TfidfVectorizer  
 #将文本中的词语转换为词频矩阵  
-vectorizer = TfidfVectorizer(stop_words = sw)  
+vectorizer = TfidfVectorizer(sublinear_tf=True, max_df=0.5, stop_words = 'english')  
 #计算个词语出现的次数  
 X = vectorizer.fit(word_data)
 X = vectorizer.transform(word_data)  
 #获取词袋中所有文本关键词  
 word = vectorizer.get_feature_names()  
-print word  
+print 'len(word):',len(word) 
 #查看词频结果  
-print X.toarray()  
+# print X.toarray()  
 
+
+'''
 from sklearn.feature_extraction.text import TfidfTransformer
 #类调用  
 transformer = TfidfTransformer()  
@@ -99,3 +101,4 @@ print transformer
 tfidf = transformer.fit_transform(X)  
 #查看数据结构 tfidf[i][j]表示i类文本中的tf-idf权重  
 print tfidf.toarray()  
+'''
