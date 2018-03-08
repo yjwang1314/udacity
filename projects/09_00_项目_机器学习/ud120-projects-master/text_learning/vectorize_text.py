@@ -52,7 +52,8 @@ for name, from_person in [("sara", from_sara), ("chris", from_chris)]:
             words = parseOutText(email)
             ### use str.replace() to remove any instances of the words
             ### ["sara", "shackleton", "chris", "germani"]
-            for replace_w in ["sara", "shackleton", "chris", "germani"]:
+            for replace_w in ["sara", "shackleton", "chris", "germani", "sshacklensf",
+                              "cgermannsf"]:
                 if replace_w in words:
                     words = words.replace(replace_w, '')
 
