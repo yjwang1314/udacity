@@ -6,6 +6,7 @@ __pycache__/
 # Customise
 *.osm.json
 enron_mail_20150507.tar.gz
+eigenfaces/
 
 # Account and Password
 Pools/
