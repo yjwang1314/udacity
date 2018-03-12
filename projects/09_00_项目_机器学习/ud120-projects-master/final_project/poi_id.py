@@ -37,9 +37,17 @@ data_dict.pop('TOTAL') # Summation of everyone's data
 
 ### Task 3: Create new feature(s)
 
-## 3.1 select kbest features
+## 3.1 kbest score features
 from feature_selecting import Select_K_Best
-k_best_features = Select_K_Best(data_dict, features_list, 15)
+k_best_features = Select_K_Best(data_dict, features_list, 18)
+
+## 3.2 create new feature and check
+from feature_creation import CreatePoiEmailRatio
+CreatePoiEmailRatio(data_dict, features_list)
+k_best_features = Select_K_Best(data_dict, features_list, 5)
+k_best_features_list = map(lambda x: x[0], k_best_features)
+k_best_features_list.insert(0, 'poi')
+features_list = k_best_features_list
 
 ### Store to my_dataset for easy export below.
 my_dataset = data_dict
@@ -47,6 +55,45 @@ my_dataset = data_dict
 ### Extract features and labels from dataset for local testing
 data = featureFormat(my_dataset, features_list, sort_keys = True)
 labels, features = targetFeatureSplit(data)
+
+### Scale features
+from sklearn.preprocessing import MinMaxScaler
+scaler = MinMaxScaler()
+features = scaler.fit_transform(features)
+
+### try different classifiers, parameters, to find out the best classifer
+from sklearn.pipeline import Pipeline
+from sklearn.decomposition import PCA
+from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import classification_report, confusion_matrix
+
+from sklearn.naive_bayes import GaussianNB
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import AdaBoostClassifier, RandomForestClassifier
+from sklearn.neighbors import nearest_centroid
+from sklearn.svm import SVC
+
+'''
+estimators = [('reduce_dim', PCA()), ('clf', DecisionTreeClassifier())]
+pipe = Pipeline(estimators)
+parameters = {'reduce_dim__n_components': [None, 2, 3, 4, 5], 
+              'clf__min_samples_split': [3, 4, 5, 6, 7, 8]}
+clf = GridSearchCV(pipe, parameters, scoring='f1')
+'''
+
+
+clf = GaussianNB()
+
+'''
+clf.fit(features_train, labels_train)
+clf.score(features_test, labels_test)
+pred = clf.predict(features_test)
+
+
+from sklearn.metrics import classification_report, confusion_matrix
+print classification_report(labels_test, pred)
+print confusion_matrix(labels_test, pred)
+'''
 
 
 ### Task 4: Try a varity of classifiers
@@ -56,8 +103,9 @@ labels, features = targetFeatureSplit(data)
 ### http://scikit-learn.org/stable/modules/pipeline.html
 
 # Provided to give you a starting point. Try a variety of classifiers.
-from sklearn.naive_bayes import GaussianNB
-clf = GaussianNB()
+# from sklearn.naive_bayes import GaussianNB
+# clf = GaussianNB()
+
 
 ### Task 5: Tune your classifier to achieve better than .3 precision and recall 
 ### using our testing script. Check the tester.py script in the final project
@@ -67,9 +115,18 @@ clf = GaussianNB()
 ### http://scikit-learn.org/stable/modules/generated/sklearn.cross_validation.StratifiedShuffleSplit.html
 
 # Example starting point. Try investigating other evaluation techniques!
+'''
 from sklearn.cross_validation import train_test_split
 features_train, features_test, labels_train, labels_test = \
     train_test_split(features, labels, test_size=0.3, random_state=42)
+    
+clf.fit(features_train, labels_train)
+clf.score(features_test, labels_test)
+pred = clf.predict(features_test, labels_test)
+
+from sklearn.metrics import classification_report
+print classification_report(labels_test, pred)
+'''
 
 ### Task 6: Dump your classifier, dataset, and features_list so anyone can
 ### check your results. You do not need to change anything below, but make sure
