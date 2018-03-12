@@ -65,7 +65,8 @@ features = scaler.fit_transform(features)
 from sklearn.pipeline import Pipeline
 from sklearn.decomposition import PCA
 from sklearn.model_selection import GridSearchCV
-from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.metrics import classification_report, confusion_matrix, \
+                            precision_score, recall_score, f1_score
 
 from sklearn.naive_bayes import GaussianNB
 from sklearn.tree import DecisionTreeClassifier
@@ -73,6 +74,42 @@ from sklearn.ensemble import AdaBoostClassifier, RandomForestClassifier
 from sklearn.neighbors import nearest_centroid
 from sklearn.svm import SVC
 
+## split data to train and test
+from sklearn.cross_validation import train_test_split
+features_train, features_test, labels_train, labels_test = \
+    train_test_split(features, labels, test_size=0.3, random_state=42)
+
+## DT
+clf = DecisionTreeClassifier()
+param_grid = {'min_samples_split': [2, 5, 10, 30]}
+clf = GridSearchCV(clf, param_grid)
+clf = clf.fit(features_train, labels_train)
+pred = clf.predict(features_test)
+best_param = clf.best_params_ # best parameter
+
+result = {}
+for v in param_grid['min_samples_split']:
+    clf = DecisionTreeClassifier(min_samples_split=v)
+    clf.fit(features_train, labels_train)
+    pred = clf.predict(features_test)
+    accuracy = clf.score(features_test, labels_test)
+    precision = precision_score(labels_test, pred)
+    recall = recall_score(labels_test, pred)
+    f1 = f1_score(labels_test, pred)
+    result[v] = {'accuracy': accuracy,
+                  'precision': precision,
+                  'recall': recall,
+                  'f1': f1}
+    
+tuples = zip(param_grid['min_samples_split'], map(lambda x: x['f1'], result.values()))
+best_result = sorted(tuples, key=lambda x: x[1], reverse=True)
+
+
+print classification_report(labels_test, pred)
+print confusion_matrix(labels_test, pred)
+
+
+## PCA + DT
 '''
 estimators = [('reduce_dim', PCA()), ('clf', DecisionTreeClassifier())]
 pipe = Pipeline(estimators)
@@ -81,18 +118,11 @@ parameters = {'reduce_dim__n_components': [None, 2, 3, 4, 5],
 clf = GridSearchCV(pipe, parameters, scoring='f1')
 '''
 
-
-clf = GaussianNB()
-
 '''
+clf = GaussianNB()
 clf.fit(features_train, labels_train)
 clf.score(features_test, labels_test)
 pred = clf.predict(features_test)
-
-
-from sklearn.metrics import classification_report, confusion_matrix
-print classification_report(labels_test, pred)
-print confusion_matrix(labels_test, pred)
 '''
 
 
@@ -103,8 +133,8 @@ print confusion_matrix(labels_test, pred)
 ### http://scikit-learn.org/stable/modules/pipeline.html
 
 # Provided to give you a starting point. Try a variety of classifiers.
-# from sklearn.naive_bayes import GaussianNB
-# clf = GaussianNB()
+from sklearn.naive_bayes import GaussianNB
+clf = GaussianNB()
 
 
 ### Task 5: Tune your classifier to achieve better than .3 precision and recall 
@@ -119,13 +149,6 @@ print confusion_matrix(labels_test, pred)
 from sklearn.cross_validation import train_test_split
 features_train, features_test, labels_train, labels_test = \
     train_test_split(features, labels, test_size=0.3, random_state=42)
-    
-clf.fit(features_train, labels_train)
-clf.score(features_test, labels_test)
-pred = clf.predict(features_test, labels_test)
-
-from sklearn.metrics import classification_report
-print classification_report(labels_test, pred)
 '''
 
 ### Task 6: Dump your classifier, dataset, and features_list so anyone can
