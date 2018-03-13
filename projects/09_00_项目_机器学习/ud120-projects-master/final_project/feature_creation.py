@@ -25,7 +25,14 @@ def CreatePoiEmailRatio(data_dict, features_list):
             from_poi_ratio = float(employee['from_poi_to_this_person']) / total_from
             receipt_ration = float(employee['shared_receipt_with_poi']) / (total_to + total_from + employee['shared_receipt_with_poi'])
             employee['poi_email_ratio'] = to_poi_ratio + from_poi_ratio + receipt_ration
+            employee['from_poi_ratio'] = from_poi_ratio
+            employee['to_poi_ratio'] = to_poi_ratio
+            employee['shared_with_poi_ratio'] = float(employee['shared_receipt_with_poi']) / (total_from + employee['shared_receipt_with_poi'])
         else:
             employee['poi_email_ratio'] = 'NaN'
+            employee['from_poi_ratio'] = 'NaN'
+            employee['to_poi_ratio'] = 'NaN'
+            employee['shared_with_poi_ratio'] = 'NaN'
     
-    features_list.append('poi_email_ratio')
+    map(lambda x: features_list.append(x) ,['poi_email_ratio', 'from_poi_ratio', 'to_poi_ratio', 
+                          'shared_with_poi_ratio'])
