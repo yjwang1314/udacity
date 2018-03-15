@@ -165,17 +165,15 @@ for name, clf in zip(names, classifiers):
     if result_2[name]['f1'] > best_score:
         best_estimator = best_estimator_ii
         best_score = result_2[name]['f1']
-
-
-features_list = k_best_features_list[:6]
+#######################################     
 features_list = ['poi', 'exercised_stock_options', 'poi_email_ratio']
-clf = best_estimator
-result_3 = test_classifier(clf, my_dataset, features_list, folds=1000)
+   
+result_3 = {}	
+classifiers = clf_list      
 
-clf = clf_list[3]
-result_4 = test_classifier(clf, my_dataset, features_list, folds=1000)
-
-
+for name, clf in zip(names, classifiers):
+    result_3[name] = test_classifier(clf, my_dataset, features_list, folds=1000)   
+    
 '''
 ## PCA + knn
 estimators = [('reduce_dim', PCA()), ('clf', clf)]
@@ -213,7 +211,8 @@ features_train, features_test, labels_train, labels_test = \
 ### check your results. You do not need to change anything below, but make sure
 ### that the version of poi_id.py that you submit can be run on its own and
 ### generates the necessary .pkl files for validating your results.
-features_list = ['poi, ']
+clf = best_estimator
+features_list = ['poi', 'exercised_stock_options', 'poi_email_ratio']
 dump_classifier_and_data(clf, my_dataset, features_list)
 
 '''
