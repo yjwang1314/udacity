@@ -36,21 +36,50 @@
               .attr("height", height + margin)
             .append('g')
                 .attr('class','chart');
-
+		  
       /*
         Dimple.js Chart construction code
-      */
+      */ 
 
+          d3.select(svg)
+            .selectAll('circle')
+			.data(data)
+			.enter()
+			.append('circle')            
+
+		  debugger;
+
+          var time_extent = d3.extent(data, function(d){
+			  return d['date'];
+		  });
+
+
+          var count_extent = d3.extent(data, function(d){
+			  return d['attendence'];
+		  });
+
+		  var time_scale = d3.time.scale()
+			.range([margin, width])
+			.domain(time_extent);
+
+          var count_scale = d3.scale.linear()
+			.range([height, margin])
+			.domain(count_extent);
+
+		  /*
           var myChart = new dimple.chart(svg, data);
           var x = myChart.addTimeAxis("x", "year"); 
           myChart.addMeasureAxis("y", "attendance");
 		  x.dateParseFormat = '%Y';
 		  x.tickFormat = '%Y';
 		  x.timeInterval = 4;
+		  */
 		  myChart.addSeries(null, dimple.plot.line);
           myChart.addSeries(null, dimple.plot.scatter);
           myChart.draw();
-        };
+      
+		};
+		
       </script>
   </head>
 <body>
