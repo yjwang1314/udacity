@@ -13,23 +13,14 @@ function draw(data) {
 
     var myChart = new dimple.chart(svg, data);
     
-	myChart.addMeasureAxis("x", "height")
-		   .overrideMin = 60
-           .overrideMax = 160; 
-	myChart.addMeasureAxis("y", "weight")
-		   .overrideMin = 100
-           .overrideMax = 400;
-	//x.dateParseFormat = "%Y";
-	//x.tickFormat = "%Y";
-	//x.timeInterval = 4;
-	//myChart.addSeries(null, dimple.plot.line);
-	//myChart.addSeries(null, dimple.plot.scatter);
-	//myChart.draw();
+	var x = myChart.addMeasureAxis("x", "height");
+	x.title = '身高';
+	debugger;
+	var y = myChart.addMeasureAxis("y", "weight");
+	y.title = '体重';
 	myChart.addSeries(
         ["name", "handedness", "HR", "avg"],
         dimple.plot.bubble
     );
     myChart.draw();
-
-
 };
