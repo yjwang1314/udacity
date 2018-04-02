@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="http://d3js.org/d3.v4.min.js"></script>
+  <script src="http://dimplejs.org/dist/dimple.v2.3.0.min.js"></script>
+  <style>
+    body: {
+      background-color: #efe8d2;
+      align-items: center;
+    }
+    h2{
+      text-align: center;
+      font-family: Arial;
+      font-size: 20px;
+    }
+    h3{
+      text-align: left;
+      font-family: Arial;
+      font-size: 18px;
+      font-weight: norml;
+    }
+    p{
+      text-align: left;
+      font-family: Arial;
+      font-size: 12px;
+      font-weight: lighter;
+    }
+    p_large{
+      text-align: center;
+      font-family: Arial;
+      font-size: 14px;
+      font-weight: normal;
+    }
+    .chart{
+      align-content: center;
+    }
+    #chartContainer {
+      align-content: center;
+    }
+  </style>
+    <script type="text/javascript">
+      "use strict";
+      function draw(data) {
+      
+      /*
+        D3.js setup code
+      */
+          
+          var margin = 75,
+              width = 750 - 2*margin,
+              height = 500 - 2*margin;
+          // Header
+          d3.select("body")
+            .append("h2")
+            .text("棒球数据分析")
+          // Description
+          d3.select("body")
+            .append("p_large")
+            .text("这两个可视化是根据1157名棒球运动员的统计数据创建的.两张图表反映了惯用手和得分以及身体指标的规律.")
+          d3.select("body")
+            .append("div")
+            .attr("class", "chart")
+            .attr("id", "chartContainer")
+          d3.select("body")
+            .append("h3")
+            .text("惯用手和得分情况")
+          d3.select("body")
+            .append("p")
+            .text("发现1:左撇子有较高的平均打击率和全垒打")
+        // 创建图一,惯用手和得分情况
+        var svg = dimple.newSvg("body", width,height);
+        var myChart = new dimple.chart(svg, data);
+        myChart.setBounds(margin,margin-20,width-1.8*margin,height-1.5*margin)
+        // 添加坐标轴
+        var x = myChart.addCategoryAxis("x", "handedness");
+        x.addOrderRule(["L","B","R"]);
+        x.title = "惯用手"
+        var y1 = myChart.addMeasureAxis("y", "HR");
+        y1.title = "全垒打";
+        y1.overrideMax = 26;
+        var y2 = myChart.addMeasureAxis("y", "avg");
+        y2.title = "平均击球率";
+        y2.overrideMax = 0.3;
+        y2.overrideMin = 0.21;
+        var z = myChart.addCategoryAxis("z", "Count");
+        myChart.addSeries("平均击球率中位数",dimple.plot.line,[x,y1,z])
+                .interpolation = "cardinal";
+        myChart.addSeries("全垒打中位数", dimple.plot.line,[x,y2,z])
+                .interpolation = "cardinal";
+        myChart.addSeries("全垒打中位数",dimple.plot.bubble,[x,y1,z]);
+        myChart.addSeries("平均击球率中位数", dimple.plot.bubble,[x,y2,z]);
+        myChart.addLegend(3*margin,25,300,20, "right");
+        myChart.draw(1000);
+        // ------------------------------------------------------------------------------------
+        // 创建图二,惯用手和身体指标
+        
+        d3.select("body")
+            .append("h3")
+            .text("惯用手和身体指标")
+        d3.select("body")
+            .append("p")
+            .text("发现2:双手击球的运动员身高体重更低")
+        var svg2 = dimple.newSvg("body", width,height);
+        var myChart2 = new dimple.chart(svg2, data);
+        myChart2.setBounds(margin,margin-50,width-1.8*margin,height-1.5*margin)
+        // 添加坐标轴
+        var x_2 = myChart2.addCategoryAxis("x", "handedness");
+        x_2.addOrderRule(["L","B","R"]);
+        x_2.title = "惯用手"
+        var y1_2 = myChart2.addMeasureAxis("y", "height");
+        y1_2.title = "身高";
+        y1_2.overrideMax = 74;
+        y1_2.overrideMin = 70;
+        var y2_2 = myChart2.addMeasureAxis("y", "weight");
+        y2_2.title = "体重";
+        y2_2.overrideMax = 200;
+        y2_2.overrideMin = 170;
+        // y2_2.color.fill("#e2cf3d")
+        var z_2 = myChart2.addCategoryAxis("z", "Count");
+        myChart2.addSeries("身高中位数",dimple.plot.line,[x_2,y1_2,z_2])
+                .interpolation = "cardinal";
+        myChart2.addSeries("体重中位数", dimple.plot.line,[x_2,y2_2,z_2])
+                .interpolation = "cardinal";
+        myChart2.addSeries("身高中位数",dimple.plot.bubble,[x_2,y1_2,z_2]);
+        myChart2.addSeries("体重中位数", dimple.plot.bubble,[x_2,y2_2,z_2]);
+        myChart2.assignColor("身高中位数", "orange");
+        myChart2.assignColor("体重中位数", "lightgreen");
+        myChart2.addLegend(3*margin,1,300,20, "right");
+        myChart2.draw(2000);
+      }
+      </script>
+  </head>
+<body>
+  <script type="text/javascript">
+  /*
+    Use D3 (not dimple.js) to load the CSV file
+    and pass the contents of it to the draw function
+    */
+  d3.csv("baseball_median.csv", function(d) {
+    d['height'] = +d['height'];
+    d['weight'] = +d['weight'];
+    d['avg'] = +d['avg'];
+    d['HR'] = +d['HR'];
+    return d;
+  },draw);
+  </script>
+</body>
+</html>

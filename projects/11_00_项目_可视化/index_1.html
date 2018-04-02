@@ -138,22 +138,27 @@
 						return d['HR'];
 				});
 
-				var radius = d3.scale.sqrt()
+				var HR_radius = d3.scale.sqrt()
 							   .domain([0, HR_max])
 							   .range([2, 30]);
 							   
 				var avg_max = d3.max(data, function(d) {
 						return d['avg'];
-				});				
+				});
+
+				var avg_radius = d3.scale.sqrt()
+							   .domain([0, avg_max])
+							   .range([2, 30]);
 				// var color_extent = ["#ffffd9","#edf8b1","#c7e9b4","#7fcdbb","#41b6c4","#1d91c0","#225ea8","#253494","#081d58"];					
 
 				var color_scale = d3.scale.linear()        // 按分位数取值，可使每个区域内元素个数相等
 									.domain([0, avg_max])  // 定义域
 									.range(color);         // 值域：是颜色数组，函数的返回值是代表某种颜色的字符串
 				
-				function draw_point(draw_data) {
+				function draw_point(draw_data, score) {
 					// d3.select(svg).selectAll("draw_bubble").remove();
 					// debugger;
+					// console.log(score);
 					d3.select('svg').selectAll('circle').remove();
 					
 					var bubble = d3.select('svg')
@@ -166,15 +171,18 @@
 									.append('circle')
 									.attr('cx', function(d) {return height_scale(d['height']);})
 									.attr('cy', function(d) {return weight_scale(d['weight']);})
-									.attr('r', function(d) {return radius(d['HR']);})
+									.attr('r', function(d) {
+											if (score == 'HR') {
+												return HR_radius(d['HR']);
+											} else {
+												return avg_radius(d['avg']);
+											};	
+										})
 									.attr('fill', function(d) {return color(d.handedness);})
 									.attr('opacity', 0.3)
 									.on("mouseover", handleMouseOver)
 									.on("mouseout", handleMouseOut);
 					debugger;	
-					bubble.style('fill', function(d) {
-							return color_scale(d['avg']);
-					});
 				};
 				
 				// 鼠标悬浮在椭圆上方时，显示该椭圆的相关信息
@@ -190,8 +198,8 @@
 					var str3 = String(avg) + " " + String(HR);
 					var str4 = String(hand);
 					d3.select(this)
-						.style("rx", function(d){return radius(d.avg)*2; })
-						.style("ry", function(d){return radius(d.HR)*2; });
+						.style("rx", function(d){return avg_radius(d.avg)*2; })
+						.style("ry", function(d){return HR_radius(d.HR)*2; });
 					// 画出悬浮框
 					svg.append("rect")
 						.attr("id", "information1")
@@ -231,13 +239,14 @@
 				// 鼠标移开时删除多余的信息
 				function handleMouseOut(d, i){
 					d3.select(this)
-						.style("rx", function(d){return radius(d.avg); })
-						.style("ry", function(d){return radius(d.HR); });
+						.style("rx", function(d){return avg_radius(d.avg); })
+						.style("ry", function(d){return HR_radius(d.HR); });
 					d3.selectAll("#information1").remove();
 					d3.selectAll("#information2").remove();
 				};
 				
-				draw_point(data);
+				var score = 'HR'
+				draw_point(data, score);
 				
 				// 设置图例
 				var legend = svg.selectAll(".legend")
@@ -286,7 +295,7 @@
 					});
 
 				button.on("click", function(d) {
-					console.log(d);
+					console.log(d, score);
 					update(d);
 				})
 				
@@ -307,13 +316,49 @@
 						});
 					};
           
+					// console.log(score);
 					if (hand == "All"){
-						draw_point(data);
+						draw_point(data, score);
 					} else {
 						debugger;
-						draw_point(filtered(hand));
+						draw_point(filtered(hand), score);
 					};
+				
 				};
+				
+				var buttonNames_2 = ["全垒得分", "命中率"];
+
+				var button_2 = d3.select("#Bttn_2")
+					.selectAll("input")
+					.data(buttonNames_2)
+					.enter()
+					.append("input")
+					.attr("type", "button")
+					.attr("class", "button_2")
+					.attr("id", function(d) {
+						return d;
+					})
+					.attr("value", function(d) {
+						return d;
+					});
+
+				button_2.on("click", function(d) {
+					// debugger;
+					update_2(d);
+				})
+				
+				function update_2(score) {
+					if (score == "全垒得分") {
+						score = "HR";
+					} else { 
+						score = "avg";
+					};
+          
+					draw_point(data, score);
+					return score;
+				};
+				
+				
 			};
 		
         </script>
