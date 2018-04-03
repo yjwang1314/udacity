@@ -48,7 +48,6 @@
     <body>
         <h2>Select Handedness of The Player</h2>
         <div id="Bttn"></div>
-		<div id="Bttn_2"></div>
         <script type="text/javascript">
 			function draw(data) {
 
@@ -144,8 +143,7 @@
 							   
 				var avg_max = d3.max(data, function(d) {
 						return d['avg'];
-				});				
-				// var color_extent = ["#ffffd9","#edf8b1","#c7e9b4","#7fcdbb","#41b6c4","#1d91c0","#225ea8","#253494","#081d58"];					
+				});
 
 				var color_scale = d3.scale.linear()        // 按分位数取值，可使每个区域内元素个数相等
 									.domain([0, avg_max])  // 定义域
@@ -154,6 +152,7 @@
 				function draw_point(draw_data) {
 					// d3.select(svg).selectAll("draw_bubble").remove();
 					// debugger;
+					// console.log(score);
 					d3.select('svg').selectAll('circle').remove();
 					
 					var bubble = d3.select('svg')
@@ -172,9 +171,6 @@
 									.on("mouseover", handleMouseOver)
 									.on("mouseout", handleMouseOut);
 					debugger;	
-					bubble.style('fill', function(d) {
-							return color_scale(d['avg']);
-					});
 				};
 				
 				// 鼠标悬浮在椭圆上方时，显示该椭圆的相关信息
@@ -239,36 +235,6 @@
 				
 				draw_point(data);
 				
-				// 设置图例
-				var legend = svg.selectAll(".legend")
-								.data(color.domain())
-								.enter()
-								.append("g")
-								.attr("class", "legend")
-								.attr("transform", function(d, i){return "translate(0," + i * 20 + ")"; });
-				legend.append("rect")
-						.attr("x", width + 20)
-						.attr("width", 18)
-						.attr("height", 18)
-						.style("fill", color);
-        
-				legend.append("text")
-						.attr("x", width + 15)
-						.attr("y", 9)
-						.attr("dy", ".35em")
-						.style("text-anchor", "end")
-						.text(function(d) { 
-							if (d == "R"){
-								return "Right hand";
-							}
-							if (d == "L") {
-								return "Left hand";
-							}
-							else {
-								return "Both hand"
-							};
-						});
-				
 				var buttonNames = ["All", "Left", "Right", "Both"];
 
 				var button = d3.select("#Bttn")
@@ -306,7 +272,8 @@
 							return d.handedness == tmp_data;
 						});
 					};
-          
+    
+					// console.log(score);
 					if (hand == "All"){
 						draw_point(data);
 					} else {
