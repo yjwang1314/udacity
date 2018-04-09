@@ -17,6 +17,8 @@
 
 
 ## 参考
+- [计算器](http://www.evanmiller.org/ab-testing/sample-size.html)
+- [符号检验计算器](https://www.graphpad.com/quickcalcs/binomial1.cfm)
 - https://github.com/gerministar/ABTest
 - https://github.com/zhangguixiang/Udacity-AB-test
 - https://github.com/biLove/A-B_test
