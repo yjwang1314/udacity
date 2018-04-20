@@ -17,7 +17,6 @@ getwd()
 list.files()
 pf = read.csv('pseudo_facebook.tsv', sep='\t')
 names(pf) # 查看列表名
-
 ```
 
 ***
@@ -191,9 +190,14 @@ qplot(x = tenure/365, data = pf, binwidth = 0.25,
 
 ### 标签图
 注释：
+binwidth是每一条直方的宽度
+breaks是x轴上出现的数值
+limits是x轴显示范围
+seq产生序列
+c产生列表
 
 ```{r Labeling Plots}
-qplot(x = tenure/365, data = pf, binwidth = 0.25,
+qplot(x = tenure/365, data = pf, binwidth = 0.25, 
       xlab = 'Number of years using Facebook',
       ylab = 'Number of users in sample',
       color = I('black'), fill = I('#F79420')) +
@@ -230,14 +234,45 @@ qplot(x = age, data = pf, binwidth = 1,
 
 ### 改变数据
 注释：
+```{r}
+# define individual plots
+p1 = qplot(x = friend_count, data = pf)
+
+summary(pf$friend_count)
+
+summary(log10(pf$friend_count + 1))
+p2 = qplot(x = log10(friend_count + 1), data = pf)
+
+summary(sqrt(pf$friend_count))
+p3 = qplot(x = sqrt(friend_count), data = pf)
+
+# install.packages('gridExtra')
+
+# arrange plots in grid
+library(gridExtra)
+grid.arrange(p1, p2, p3, ncol=2)
+
+# 方法2 ggplot
+p1 = ggplot(aes(x = friend_count), data = pf) + geom_histogram()
+p2 = p1 + scale_x_log10()
+p3 = p1 + scale_x_sqrt()
+grid.arrange(p1, p2, p3, ncol=2)
+```
 
 ***
 
 ### 调整尺寸图层
 注释：
+countScale更好，因为更够反映实际的个数。
 
 ```{r Add a Scaling Layer}
+logScale = qplot(x = log10(friend_count+1), data = pf)
 
+countScale = ggplot(aes(x = friend_count), data = pf) +
+  geom_histogram() +
+  scale_x_log10()
+
+grid.arrange(logScale, countScale, ncol = 2)
 ```
 
 ***
@@ -246,7 +281,18 @@ qplot(x = age, data = pf, binwidth = 1,
 ### 频数多边图
 
 ```{r Frequency Polygons}
+qplot(x = friend_count, data = subset(pf, !is.na(gender)), binwidth = 10)+
+  scale_x_continuous(lim = c(0, 1000), breaks = seq(0, 1000, 50))+
+  facet_wrap(~gender)
 
+qplot(x = friend_count, y = ..count../sum(..count..),
+      data = subset(pf, !is.na(gender)), 
+      xlab = 'Friend Count',
+      ylab = 'Proportion of Users with that friend count',
+      binwidth = 10,
+      geom = 'freqpoly',
+      color = gender) +
+  scale_x_continuous(lim = c(0, 1000), breaks = seq(0, 1000, 50))
 ```
 
 ***
@@ -255,7 +301,17 @@ qplot(x = age, data = pf, binwidth = 1,
 注释：
 
 ```{r Likes on the Web}
-
+qplot(x = www_likes,
+      data = subset(pf, !is.na(gender)), 
+      xlab = 'Likes Count',
+      ylab = 'Proportion of Users with that likes count',
+      geom = 'freqpoly',
+      color = gender) +
+  scale_x_continuous() +
+  scale_x_log10()
+```
+```{r what's the like count and which gener has more}
+by(pf$www_likes, pf$gender, sum)
 ```
 
 ***
@@ -264,7 +320,26 @@ qplot(x = age, data = pf, binwidth = 1,
 注释：
 
 ```{r Box Plots}
+p1 = qplot(x = gender, y = friend_count,
+           data = subset(pf, !is.na(gender)),
+           geom = 'boxplot')
 
+p2 = qplot(x = gender, y = friend_count,
+           data = subset(pf, !is.na(gender)),
+           geom = 'boxplot',
+           ylim = c(0, 1000))
+
+p3 = qplot(x = gender, y = friend_count,
+           data = subset(pf, !is.na(gender)),
+           geom = 'boxplot') +
+  scale_y_continuous(limits = c(0, 1000))
+
+p4 = qplot(x = gender, y = friend_count,
+           data = subset(pf, !is.na(gender)),
+           geom = 'boxplot') +
+  coord_cartesian(ylim = c(0, 1000))
+
+grid.arrange(p1, p2, p3, p4, ncol = 2)
 ```
 
 #### 调整代码，关注朋友数量在 0 到 1000 之间的用户。
@@ -279,7 +354,13 @@ qplot(x = age, data = pf, binwidth = 1,
 注释：
 
 ```{r Box Plots, Quartiles, and Friendships}
-
+qplot(x = gender, y = friend_count,
+      data = subset(pf, !is.na(gender)),
+      geom = 'boxplot') +
+  coord_cartesian(ylim = c(0, 250))
+```
+```{r}
+by(pf$friend_count, pf$gender, summary)
 ```
 
 #### 一般来说，我们样本中哪些人更容易交朋友，男性还是女性？
@@ -287,7 +368,12 @@ qplot(x = age, data = pf, binwidth = 1,
 #### 写出可以验证答案的一些方法。
 回复：
 ```{r Friend Requests by Gender}
+qplot(x = gender, y = friendships_initiated,
+      data = subset(pf, !is.na(gender)),
+      geom = 'boxplot') +
+  coord_cartesian(ylim = c(0, 250))
 
+by(pf$friendships_initiated, pf$gender, summary)
 ```
 
 回复：
@@ -296,8 +382,19 @@ qplot(x = age, data = pf, binwidth = 1,
 
 ### 得到逻辑
 注释：
+factor转换数据为字符型或数字型，用作比较
 
 ```{r Getting Logical}
+summary(pf$mobile_likes)
+
+summary(pf$mobile_likes > 0)
+
+mobile_check_in = NA
+pf$mobile_check_in = ifelse(pf$mobile_likes > 0, 1, 0)
+pf$mobile_check_in = factor(pf$mobile_check_in)
+summary(pf$mobile_check_in)
+
+sum(pf$mobile_check_in == 1) / length(pf$mobile_check_in)
 
 ```
 
