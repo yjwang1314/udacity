@@ -1,0 +1,345 @@
+第 4 课
+========================================================
+
+***
+
+### 散点图和自我感知的关注量
+注释：
+
+***
+
+### 散点图
+注释：
+
+```{r Scatterplots}
+library(ggplot2)
+pf = read.csv('pseudo_facebook.tsv', sep = '\t')
+
+qplot(x = age, y = friend_count, data = pf)
+```
+
+***
+
+#### 你现在注意到什么？
+回复：
+年轻用户人数比较多，同时在68岁和90岁以上有几个年龄的用户人数特别多，可能是虚假年龄或者假帐户。
+***
+
+### ggplot 语法
+注释：
+
+```{r ggplot Syntax}
+ggplot(aes(x = age, y = friend_count), data = pf) +
+  geom_point() +
+  xlim(13, 90)
+```
+
+***
+
+### 过度绘制
+注释：
+# goem_point(alpha = 1/20) 用1个点等效成20个点
+# geom_jitter(alpha = 1/20) 增加噪音抖动，年龄不只是10的倍数
+```{r Overplotting}
+ggplot(aes(x = age, y = friend_count), data = pf) +
+  geom_point(alpha = 1/20) +
+  xlim(13, 90)
+
+ggplot(aes(x = age, y = friend_count), data = pf) +
+  geom_jitter(alpha = 1/20) +
+  xlim(13, 90)
+```
+
+#### 你在这个绘图中注意到了什么？
+回复：
+年轻用户的好友数并没有之前那么高，大多数年轻用户好友数低于1000。
+69年龄组与25或26年龄组的用户相似。
+***
+
+### Coord_trans()
+注释：
+
+```{r Coord_trans()}
+ggplot(aes(x = age, y = friend_count), data = pf) +
+  geom_point(alpha = 1/20) +
+  xlim(13, 90) +
+  coord_trans(y = 'sqrt')
+```
+
+#### 查阅 coord_trans() 的文档，在绘图中增加一层，使用平方根函数改变 friend_count。创建你的绘图！
+
+# position = position_jitter(h = 0) 因为抖动会向正负抖动，所以要简单的抖动可能出现好友个数为负的情况，平方根转换就成为虚数了，所以设置位置参数等于位置抖动，然后将其传递给最小高度为0，即抖动最小不能小于0，避免出现负数开方的警告信息。
+```{r}
+ggplot(aes(x = age, y = friend_count), data = pf) +
+  geom_point(alpha = 1/20, position = position_jitter(h = 0)) +
+  xlim(13, 90) +
+  coord_trans(y = 'sqrt')
+```
+
+#### 你发现了什么？
+更容易看到好友个数，条件及年龄分布，
+***
+
+### Alpha 和抖动
+注释：
+Explore the relationship between friends initiated vs age.
+```{r Alpha and Jitter}
+ggplot(aes(x = age, y = friendships_initiated), data = pf) +
+  geom_point(alpha = 1/20, position = position_jitter(h = 0)) +
+  xlim(13, 100) +
+  coord_trans(y = 'sqrt')
+```
+
+***
+
+### 过度绘制和领域知识
+注释：
+
+***
+
+### 条件平均数
+注释：
+
+```{r Conditional Means}
+install.packages('dplyr')
+library(dplyr)
+
+age_groups = group_by(pf, age)
+pf.fc_by_age = summarise(age_groups,
+          friend_count_mean = mean(friend_count),
+          friend_count_median = median(friend_count),
+          n = n())
+pf.fc_by_age = arrange(pf.fc_by_age, age)
+head(pf.fc_by_age)
+```
+
+创建你的绘图！
+
+```{r Conditional Means Plot}
+ggplot(aes(x = age, y = friend_count_mean), data = pf.fc_by_age) +
+  geom_line()
+
+```
+
+***
+
+### 将摘要与原始数据叠加
+注释：
+
+```{r Overlaying Summaries with Raw Data}
+ggplot(aes(x = age, y = friend_count), data = pf) +
+  xlim(13, 90) +
+  geom_point(alpha = 1/20, 
+             position = position_jitter(h = 0),
+             color = 'orange') +
+  coord_trans(y = 'sqrt') + 
+  geom_line(stat = 'summary', fun.y = mean) + 
+  geom_line(stat = 'summary', fun.y = quantile, fun.args = list(probs = 0.1),
+            linetype = 2, color = 'blue') + 
+  geom_line(stat = 'summary', fun.y = quantile, fun.args = list(probs = 0.9),
+            linetype = 2, color = 'blue') +
+  geom_line(stat = 'summary', fun.y = quantile, fun.args = list(probs = 0.5),
+            color = 'blue')
+```
+```{r}
+ggplot(aes(x = age, y = friend_count), data = pf) +
+  coord_cartesian(xlim = c(13, 70), ylim = c(0, 1000)) +
+  geom_point(alpha = 1/20, 
+             position = position_jitter(h = 0),
+             color = 'orange') +
+  geom_line(stat = 'summary', fun.y = mean) + 
+  geom_line(stat = 'summary', fun.y = quantile, fun.args = list(probs = 0.1),
+            linetype = 2, color = 'blue') + 
+  geom_line(stat = 'summary', fun.y = quantile, fun.args = list(probs = 0.9),
+            linetype = 2, color = 'blue') +
+  geom_line(stat = 'summary', fun.y = quantile, fun.args = list(probs = 0.5),
+            color = 'blue')
+```
+
+#### 你在这个绘图中发现了什么？
+回复：
+很少人的好友数超过1000，30060岁的大部分用户好友数目少于250
+***
+
+### Moira：直方图总结与散点图
+查看这个视频中的 Instructor Notes，下载 Moira's 关于感知关注量的论文，观察最终绘图。
+
+注释：
+
+***
+
+### 相关性
+注释：
+
+```{r Correlation}
+cor.test(pf$age, pf$friend_count, method = 'pearson')
+
+with(pf, cor.test(age, friend_count))
+```
+
+查看函数 cor.test 的文档。
+
+年龄和朋友数量的相关性是什么？四舍五入到小数点后三位。
+回复：
+
+***
+
+### 数据集的相关性
+注释：
+
+```{r Correlation on Subsets}
+with(subset(pf, pf$age <= 70), cor.test(age, friend_count))
+```
+
+***
+
+### 相关性方法
+注释：
+单单从1个相关系数来判断变量间的相关性是不够全面，还需要观察散点图和计算条件汇总来深入理解变量间的关系
+***
+
+## 创建散点图
+注释：
+
+```{r}
+ggplot(aes(x = www_likes_received, y = likes_received), data = pf) +
+  geom_point()
+```
+
+***
+
+### 强相关
+注释：
+
+```{r Strong Correlations}
+ggplot(aes(x = www_likes_received, y = likes_received), data = pf) +
+  geom_point() +
+  xlim(0, quantile(pf$www_likes_received, 0.95)) +
+  ylim(0, quantile(pf$likes_received, 0.95)) +
+  geom_smooth(method = 'lm', color = 'red')
+```
+
+两个变量之间的相关性是什么？计算时包含变量的前 5% 数值，四舍五入到小数点后三位。
+
+```{r Correlation Calcuation}
+with(pf, cor.test(www_likes_received, likes_received))
+```
+
+回复：
+0.9479902，如此高的相关性是因为变量之间存在包含关系。
+***
+
+### Moira 的相关性
+注释：
+强相关不一定永远是好事，很可能他们都属于同一类别的信息，并不是彼此独立，所以很难判断哪个变量产生那种现象。
+相关性对确认选择哪些变量有用有帮助。
+***
+
+### 相关性的更多注意事项
+注释：
+
+```{r More Caution With Correlation}
+install.packages('alr3')
+library(alr3)
+```
+
+创建你的绘图！
+
+```{r Temp vs Month}
+data(Mitchell)
+?Mitchell
+
+ggplot(aes(x = Month, y = Temp), data = Mitchell) +
+  geom_point()
+```
+
+***
+
+### 噪音散点图
+a. 猜猜散点图的相关系数。
+
+b. 两个变量的实际相关性是什么？
+(四舍五入到千分位)
+
+```{r Noisy Scatterplots}
+with(Mitchell, cor.test(Month, Temp))
+```
+
+***
+
+### 理解数据
+注释：
+
+```{r Making Sense of Data}
+ggplot(aes(x = Month, y = Temp), data = Mitchell) +
+  geom_point() +
+  scale_x_continuous(breaks = seq(0, 203, 12))
+```
+
+***
+
+### 新视角
+
+你发现了什么？
+回复：
+```{r}
+ggplot(aes(x=(Month%%12),y=Temp),data=Mitchell)+ 
+  geom_point() 
+```
+
+观看解答视频，核对 Instructor Notes！
+注释：
+
+***
+
+### 理解噪音：年龄到含有月份的年龄
+注释：
+
+```{r Understanding Noise: Age to Age Months}
+
+```
+
+***
+
+### 含有月份平均数的年龄
+
+```{r Age with Months Means}
+
+```
+
+编程任务
+```{r Programming Assignment}
+
+```
+
+***
+
+### 条件平均数的噪音
+
+```{r Noise in Conditional Means}
+
+```
+
+***
+
+### 使条件平均数更加流畅
+注释：
+
+```{r Smoothing Conditional Means}
+
+```
+
+***
+
+### 选择哪个绘图？
+注释：
+
+***
+
+### 分析两个变量
+思考：
+
+***
+
+点击 **KnitHTML** 查看你的成果和这节课的 html 页面、
+答案和注释！
