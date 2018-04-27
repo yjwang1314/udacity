@@ -302,22 +302,38 @@ ggplot(aes(x=(Month%%12),y=Temp),data=Mitchell)+
 ***
 
 ### 含有月份平均数的年龄
-
+# Create a new variable, 'age_with_months', in the 'pf' data frame.
+# Be sure to save the variable in the data frame rather than creating
+# a separate, stand-alone variable. You will need to use the variables
+# 'age' and 'dob_month' to create the variable 'age_with_months'.
 ```{r Age with Months Means}
-
+pf$age_with_months = pf$age + (12-pf$dob_month)/12
 ```
 
 编程任务
 ```{r Programming Assignment}
+age_groups = group_by(pf, age_with_months)
 
+pf.fc_by_age_months = summarise(age_groups,
+          friend_count_mean = mean(friend_count),
+          friend_count_median = median(as.numeric(friend_count)),
+          n = n())
+
+pf.fc_by_age_months = arrange(pf.fc_by_age_months, age_with_months)
 ```
 
 ***
 
 ### 条件平均数的噪音
-
+# Create a new line plot showing friend_count_mean versus the new variable,
+# age_with_months. Be sure to use the correct data frame (the one you created
+# in the last exercise) AND subset the data to investigate users with ages less
+# than 71.
 ```{r Noise in Conditional Means}
-
+ggplot(aes(x = age_with_months, y = friend_count_mean), data = pf.fc_by_age_months) +
+  geom_line() +
+  xlim(13, 71) +
+  ylim(0, 500)
 ```
 
 ***
@@ -326,14 +342,29 @@ ggplot(aes(x=(Month%%12),y=Temp),data=Mitchell)+
 注释：
 
 ```{r Smoothing Conditional Means}
+p1 = ggplot(aes(x = age, y = friend_count_mean), 
+            data = subset(pf.fc_by_age, age < 71)) +
+  geom_line() +
+  geom_smooth()
 
+p2 = ggplot(aes(x = age_with_months, y = friend_count_mean),
+            data = subset(pf.fc_by_age_months, age_with_months < 71)) +
+  geom_line() +
+  geom_smooth()
+
+p3 = ggplot(aes(x = round(age/5)*5, y = friend_count),
+            data = subset(pf, age < 71)) +
+  geom_line(stat = 'summary', fun.y = mean)
+
+library(gridExtra)
+grid.arrange(p1, p2, p3, ncol = 1)
 ```
 
 ***
 
 ### 选择哪个绘图？
 注释：
-
+不需要选择，探索性数据分析的过程只是揭示出相同数据的不同信息。但当要分享工作时，就要选择更易于沟通的图表。
 ***
 
 ### 分析两个变量
