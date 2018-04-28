@@ -4,6 +4,7 @@
 library(ggplot2)
 library(dplyr)
 library(gridExtra)
+library(reshape2)
 
 pf = read.delim('pseudo_facebook.tsv')
 ```
@@ -353,6 +354,7 @@ ggplot(aes(x = time, y = price), data = yo) +
 ***
 
 ### 观察家庭的样本
+# x %in% y 返回一个长度与 x 相同的逻辑（布尔）向量，该向量指出 x 中的每一个条目是否都出现在 y 中。也就是说，对于 x 中的每一个条目，该向量都会检查这一条目是否也出现在 y 中。
 
 ```{r Looking at Sample of Households}
 set.seed(4230)
@@ -364,6 +366,8 @@ ggplot(aes(x = time, y = price),
   geom_line() +
   geom_point(aes(size = all.purchases), pch = 1)
 ```
+
+
 
 ***
 
@@ -379,6 +383,15 @@ ggplot(aes(x = time, y = price),
 
 ### 散点图矩阵
 注释：
+```{r}
+install.packages('GGally')
+library(GGally)
+theme_set(theme_minimal(20))
+
+set.seed(1836)
+pf_subset = pf[, c(2:15)]
+ggpairs(pf_subset[sample.int(nrow(pf_subset), 1000),])
+```
 
 ***
 
