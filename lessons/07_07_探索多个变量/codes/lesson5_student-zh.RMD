@@ -294,16 +294,36 @@ grid.arrange(p1, p2, p3, p4, p5, ncol = 1)
 注释：
 
 ```{r Histograms Revisited}
+yo = read.csv('yogurt.csv')
+str(yo)
 
+yo$id = factor(yo$id)
+str(yo)
+
+ggplot(aes(x = price), data = yo) +
+  geom_histogram()
 ```
 
 ***
 
 ### 购买数量
 注释：
+# Create a new variable called all.purchases,
+# which gives the total counts of yogurt for
+# each observation or household.
+
+# One way to do this is using the transform
+# function. You can look up the function transform
+# and run the examples of code at the bottom of the
+# documentation to figure out what it does.
+
+# The transform function produces a data frame
+# so if you use it then save the result to 'yo'!
 
 ```{r Number of Purchases}
-
+yo = transform(yo, all.purchases = strawberry + blueberry + pina.colada +
+                 plain + mixed.berry)
+# yo$all.purchases = yo$strawberry + yo$blueberry + yo$pina.colada + yo$plain + yo$mixed.berry
 ```
 
 ***
@@ -311,8 +331,18 @@ grid.arrange(p1, p2, p3, p4, p5, ncol = 1)
 ### 一段时期的价格
 注释：
 
-```{r Prices over Time}
+# Create a scatterplot of price vs time.
 
+# This will be an example of a time series plot.
+
+# Resolve overplotting issues by using
+# techniques you learned in Lesson 4.
+
+# What are some things that you notice?
+
+```{r Prices over Time}
+ggplot(aes(x = time, y = price), data = yo) +
+  geom_jitter(alpha = 1/4, shape = 21)
 ```
 
 ***
@@ -325,7 +355,14 @@ grid.arrange(p1, p2, p3, p4, p5, ncol = 1)
 ### 观察家庭的样本
 
 ```{r Looking at Sample of Households}
+set.seed(4230)
+sample.ids = sample(levels(yo$id), 16)
 
+ggplot(aes(x = time, y = price),
+       data = subset(yo, id %in% sample.ids)) +
+  facet_wrap(~id) +
+  geom_line() +
+  geom_point(aes(size = all.purchases), pch = 1)
 ```
 
 ***
