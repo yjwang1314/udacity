@@ -23,21 +23,85 @@ library(ggplot2)
 wine = read.csv('wineQualityReds.csv')
 ```
 
+# 数据纵览
+```{r echo=False}
+dim(wine) # 1599 13
+str(wine)
+summary(wine)
+```
 # 单变量绘图选择
+## 固定酸直方图
+```{r echo=FALSE, Univariate_Plots}
+ggplot(aes(fixed.acidity), data = wine) +
+  geom_histogram()
+```
+红葡萄酒中固定酸主要集中在6-10之间。
+
+## 挥发酸直方图
+```{r echo=FALSE, Univariate_Plots}
+ggplot(aes(volatile.acidity), data = wine) +
+  geom_histogram()
+```
+红酒中挥发性酸的含量普遍比较集中，大致在0.2~0.8左右。
+
+## 柠檬酸直方图
+```{r echo=FALSE, Univariate_Plots}
+ggplot(aes(citric.acid), data = wine) +
+  geom_histogram()
+```
+柠檬酸呈双峰分布。
+
+## 残糖直方图
+```{r echo=FALSE, Univariate_Plots}
+ggplot(aes(residual.sugar), data = wine) +
+  geom_histogram()
+```
+残糖分布呈右偏，分布差别比较大，有一些异常值，对异常值进行处理：
+
+
+## 氯化物直方图
+```{r echo=FALSE, Univariate_Plots}
+ggplot(aes(chlorides), data = wine) +
+  geom_histogram()
+```
+## 游离二氧化硫直方图
+```{r echo=FALSE, Univariate_Plots}
+ggplot(aes(free.sulfur.dioxide), data = wine) +
+  geom_histogram()
+```
+## 总二氧化硫直方图
+```{r echo=FALSE, Univariate_Plots}
+ggplot(aes(total.sulfur.dioxide), data = wine) +
+  geom_histogram()
+```
+## 密度直方图
+```{r echo=FALSE, Univariate_Plots}
+ggplot(aes(density), data = wine) +
+  geom_histogram()
+```
+## ph值直方图
+```{r echo=FALSE, Univariate_Plots}
+ggplot(aes(pH), data = wine) +
+  geom_histogram()
+```
+## 硫化物直方图
+```{r echo=FALSE, Univariate_Plots}
+ggplot(aes(sulphates), data = wine) +
+  geom_histogram()
+```
+## 酒精直方图
+```{r echo=FALSE, Univariate_Plots}
+ggplot(aes(alcohol), data = wine) +
+  geom_histogram()
+```
+## 质量柱状图
 ```{r echo=FALSE, Univariate_Plots}
 ggplot(aes(quality), data = wine) +
   geom_histogram()
 ```
-
 # 单变量分析
 
 ### 你的数据集结构是什么？
-```{r echo=False}
-dim(wine)
-str(wine)
-summary(wine)
-```
-
 
 ### 你的数据集内感兴趣的主要特性有哪些？
 
