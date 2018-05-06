@@ -57,70 +57,192 @@ ggplot(aes(residual.sugar), data = wine) +
   geom_histogram()
 ```
 残糖分布呈右偏，分布差别比较大，有一些异常值，对异常值进行处理：
-
+```{r echo=FALSE, Univariate_Plots}
+ggplot(aes(residual.sugar), data = wine) +
+  geom_histogram() +
+  scale_x_log10(lim = c(1, 5), breaks = seq(1, 5, 1))
+```
+残糖大部分分布在1-4之间，很少就的糖量非常大。
 
 ## 氯化物直方图
 ```{r echo=FALSE, Univariate_Plots}
 ggplot(aes(chlorides), data = wine) +
   geom_histogram()
 ```
+```{r echo=FALSE, Univariate_Plots}
+ggplot(aes(chlorides), data = wine) +
+  geom_histogram() +
+  scale_x_continuous(lim = c(0, 0.2), breaks = seq(0, 0.2, 0.05))
+```
+氯化物分布呈右偏，且存在异常值，分布差别比较大，氯化物含量主要分布在0.05-0.1之间。
+
 ## 游离二氧化硫直方图
 ```{r echo=FALSE, Univariate_Plots}
 ggplot(aes(free.sulfur.dioxide), data = wine) +
   geom_histogram()
 ```
+游离二氧化硫主要集中在0-20之间。
+
 ## 总二氧化硫直方图
 ```{r echo=FALSE, Univariate_Plots}
 ggplot(aes(total.sulfur.dioxide), data = wine) +
   geom_histogram()
 ```
+```{r echo=FALSE, Univariate_Plots}
+ggplot(aes(total.sulfur.dioxide), data = wine) +
+  geom_histogram() +
+  scale_x_continuous(lim = c(0, 150))
+```
+总二氧化硫含量主要集中在5-70之间。
+
 ## 密度直方图
 ```{r echo=FALSE, Univariate_Plots}
 ggplot(aes(density), data = wine) +
   geom_histogram()
 ```
+密度的分布非常接近正态分布，均值大约是1，与水的密度相近。
+
 ## ph值直方图
 ```{r echo=FALSE, Univariate_Plots}
 ggplot(aes(pH), data = wine) +
   geom_histogram()
 ```
+ph值的分布也接近正态分布，集中在3.0-3.5之间，呈弱酸性，可能是因为红酒中的硫化物、氯化物引起。
+
 ## 硫化物直方图
 ```{r echo=FALSE, Univariate_Plots}
 ggplot(aes(sulphates), data = wine) +
   geom_histogram()
 ```
+```{r echo=FALSE, Univariate_Plots}
+ggplot(aes(sulphates), data = wine) +
+  geom_histogram() +
+  scale_x_log10(breaks = seq(0, 2, 0.1))
+```
+经过对数转换后的硫化物分布接近正态分布，主要集中在0.5-0.8之间。
+
 ## 酒精直方图
 ```{r echo=FALSE, Univariate_Plots}
 ggplot(aes(alcohol), data = wine) +
   geom_histogram()
 ```
+大部分红酒的酒精浓度分布在9-12之间，浓度并不高。
+
 ## 质量柱状图
 ```{r echo=FALSE, Univariate_Plots}
 ggplot(aes(quality), data = wine) +
-  geom_histogram()
+  geom_bar() +
+  scale_x_continuous(breaks = seq(0, 8, 1))
 ```
+红酒的质量主要集中在中等质量5和6，质量特别差或特别好的红酒相对比较少，质量的分布接近正态分布。
+
+# 创建新变量，红酒质量评价
+```{r echo=FALSE, Univariate_Plots}
+wine$rating[wine$quality <= 4] = 'Poor'
+wine$rating[wine$quality > 4 & wine$quality <= 6] = 'Good'
+wine$rating[wine$quality >= 7] = 'Excellent'
+```
+
 # 单变量分析
 
 ### 你的数据集结构是什么？
+数据集中共有1599种红酒，12个变量，其中有11个表示化学成分，1个表示酒精质量。
 
 ### 你的数据集内感兴趣的主要特性有哪些？
+影响红酒质量的因素有哪些。
 
 ### 你认为数据集内哪些其他特征可以帮助你探索兴趣特点？
+影响红酒质量的因素可能有酒精浓度、残余糖分、固定酸、挥发酸，还有其他因素也可能影响红酒的质量。
 
 ### 根据数据集内已有变量，你是否创建了任何新变量？
+创建了红酒质量评价的新变量。
 
 ### 在已经探究的特性中，是否存在任何异常分布？你是否对数据进行一些操作，如清洁、调整或改变数据的形式？如果是，你为什么会这样做？
-
-
+有一些变量的分布不是呈正态分布，如柠檬酸呈双峰分布，残糖呈明显的右偏分布。我对其变量对数转换，并清理异常值，因为我想检查对数转换后是否符合正态分布，这样就可以更好地认识变量的分布情况。
 
 # 双变量绘图选择
+## 质量与固定酸的关系
 ```{r echo=FALSE, Bivariate_Plots}
-
+ggplot(aes(x = factor(quality), y = fixed.acidity), data = wine) +
+  geom_jitter() +
+  geom_boxplot(alpha = 0.5, color = 'blue') +
+  stat_summary(fun.y = 'median',
+                geom = 'point',
+               color = 'red')+
+  geom_smooth(method = 'lm', aes(group = 1))
 ```
+除了质量评分为8的红酒，质量与固定酸的含量中位数呈正相关关系。
+
+## 质量与挥发酸的关系
+```{r echo=FALSE, Bivariate_Plots}
+ggplot(wine,aes(x=factor(quality),y=volatile.acidity))+geom_jitter()+
+  geom_boxplot(alpha=0.5,color='blue')+
+  stat_summary(fun.y='median',
+               geom='point',
+               color='red')+
+  geom_smooth(method='lm',aes(group=1))
+```
+除了质量评分为8的红酒，质量与挥发酸的含量中位数呈负相关关系。
+
+## 质量与柠檬酸的关系
+```{r echo=FALSE, Bivariate_Plots}
+ggplot(wine,aes(x=factor(quality),y=citric.acid))+geom_jitter()+
+  geom_boxplot(alpha=0.5,color='blue')+
+  stat_summary(fun.y='median',
+               geom='point',
+               color='red')+
+  geom_smooth(method='lm',aes(group=1))
+```
+质量与柠檬酸的含量中位数呈正相关关系。
+
+## 质量与残糖量的关系
+```{r echo=FALSE, Bivariate_Plots}
+ggplot(wine,aes(x=factor(quality),y=residual.sugar))+geom_jitter()+
+  geom_boxplot(alpha=0.5,color='blue')+
+  stat_summary(fun.y='median',
+               geom='point',
+               color='red')+
+  geom_smooth(method='lm',aes(group=1))
+```
+质量与残糖量的线性关系不大。
+
+## 质量与ph值的关系
+```{r echo=FALSE, Bivariate_Plots}
+ggplot(wine,aes(x=factor(quality),y=pH))+geom_jitter()+
+  geom_boxplot(alpha=0.5,color='blue')+
+  stat_summary(fun.y='median',
+               geom='point',
+               color='red')+
+  geom_smooth(method='lm',aes(group=1))
+```
+质量与ph值的线性关系不大。
+
+## 质量和硫化物的关系
+```{r echo=FALSE, Bivariate_Plots}
+ggplot(wine,aes(x=factor(quality),y=sulphates))+geom_jitter()+
+  geom_boxplot(alpha=0.5,color='blue')+
+  stat_summary(fun.y='median',
+               geom='point',
+               color='red')+
+  geom_smooth(method='lm',aes(group=1))
+```
+质量与硫化物含量的中位数呈正相关关系。
+
+## 质量和酒精度数的关系
+```{r echo=FALSE, Bivariate_Plots}
+ggplot(wine,aes(x=factor(quality),y=alcohol))+geom_jitter()+
+  geom_boxplot(alpha=0.5,color='blue')+
+  stat_summary(fun.y='median',
+               geom='point',
+               color='red')+
+  geom_smooth(method='lm',aes(group=1))
+```
+红酒质量和酒精浓度不是严格的线性相关,质量评分5分以上的红酒，其质量和酒精度呈正相关。
 
 # 双变量分析
 
 ### 探讨你在这部分探究中观察到的一些关系。这些感兴趣的特性与数据集内其他特性有什么区别？
+
 
 ### 你是否观察到主要特性与其他特性之间的有趣关系？
 
