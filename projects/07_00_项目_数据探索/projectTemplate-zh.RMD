@@ -1,12 +1,5 @@
 Jun Wang
 ========================================================
-# reference
-- https://s3.amazonaws.com/content.udacity-data.com/courses/ud651/diamondsExample_2016-05.html
-- https://github.com/richard-renxin/P6_redwine
-- https://github.com/esskeetit0817/EDA-projcet
-- https://github.com/jtsou/Red-Wine-Analysis-with-R
-
-
 ```{r echo=FALSE, message=FALSE, warning=FALSE, packages}
 # 加载你最终使用的所有组件
 # 在这个代码块的分析中。
@@ -38,26 +31,26 @@ ggplot(aes(fixed.acidity), data = wine) +
 红葡萄酒中固定酸主要集中在6-10之间。
 
 ## 挥发酸直方图
-```{r echo=FALSE, Univariate_Plots}
+```{r echo=FALSE}
 ggplot(aes(volatile.acidity), data = wine) +
   geom_histogram()
 ```
 红酒中挥发性酸的含量普遍比较集中，大致在0.2~0.8左右。
 
 ## 柠檬酸直方图
-```{r echo=FALSE, Univariate_Plots}
+```{r echo=FALSE}
 ggplot(aes(citric.acid), data = wine) +
   geom_histogram()
 ```
 柠檬酸呈双峰分布。
 
 ## 残糖直方图
-```{r echo=FALSE, Univariate_Plots}
+```{r echo=FALSE}
 ggplot(aes(residual.sugar), data = wine) +
   geom_histogram()
 ```
 残糖分布呈右偏，分布差别比较大，有一些异常值，对异常值进行处理：
-```{r echo=FALSE, Univariate_Plots}
+```{r echo=FALSE}
 ggplot(aes(residual.sugar), data = wine) +
   geom_histogram() +
   scale_x_log10(lim = c(1, 5), breaks = seq(1, 5, 1))
@@ -65,11 +58,11 @@ ggplot(aes(residual.sugar), data = wine) +
 残糖大部分分布在1-4之间，很少就的糖量非常大。
 
 ## 氯化物直方图
-```{r echo=FALSE, Univariate_Plots}
+```{r echo=FALSE}
 ggplot(aes(chlorides), data = wine) +
   geom_histogram()
 ```
-```{r echo=FALSE, Univariate_Plots}
+```{r echo=FALSE}
 ggplot(aes(chlorides), data = wine) +
   geom_histogram() +
   scale_x_continuous(lim = c(0, 0.2), breaks = seq(0, 0.2, 0.05))
@@ -77,18 +70,18 @@ ggplot(aes(chlorides), data = wine) +
 氯化物分布呈右偏，且存在异常值，分布差别比较大，氯化物含量主要分布在0.05-0.1之间。
 
 ## 游离二氧化硫直方图
-```{r echo=FALSE, Univariate_Plots}
+```{r echo=FALSE}
 ggplot(aes(free.sulfur.dioxide), data = wine) +
   geom_histogram()
 ```
 游离二氧化硫主要集中在0-20之间。
 
 ## 总二氧化硫直方图
-```{r echo=FALSE, Univariate_Plots}
+```{r echo=FALSE}
 ggplot(aes(total.sulfur.dioxide), data = wine) +
   geom_histogram()
 ```
-```{r echo=FALSE, Univariate_Plots}
+```{r echo=FALSE}
 ggplot(aes(total.sulfur.dioxide), data = wine) +
   geom_histogram() +
   scale_x_continuous(lim = c(0, 150))
@@ -96,25 +89,25 @@ ggplot(aes(total.sulfur.dioxide), data = wine) +
 总二氧化硫含量主要集中在5-70之间。
 
 ## 密度直方图
-```{r echo=FALSE, Univariate_Plots}
+```{r echo=FALSE}
 ggplot(aes(density), data = wine) +
   geom_histogram()
 ```
 密度的分布非常接近正态分布，均值大约是1，与水的密度相近。
 
 ## ph值直方图
-```{r echo=FALSE, Univariate_Plots}
+```{r echo=FALSE}
 ggplot(aes(pH), data = wine) +
   geom_histogram()
 ```
 ph值的分布也接近正态分布，集中在3.0-3.5之间，呈弱酸性，可能是因为红酒中的硫化物、氯化物引起。
 
 ## 硫化物直方图
-```{r echo=FALSE, Univariate_Plots}
+```{r echo=FALSE}
 ggplot(aes(sulphates), data = wine) +
   geom_histogram()
 ```
-```{r echo=FALSE, Univariate_Plots}
+```{r echo=FALSE}
 ggplot(aes(sulphates), data = wine) +
   geom_histogram() +
   scale_x_log10(breaks = seq(0, 2, 0.1))
@@ -122,14 +115,14 @@ ggplot(aes(sulphates), data = wine) +
 经过对数转换后的硫化物分布接近正态分布，主要集中在0.5-0.8之间。
 
 ## 酒精直方图
-```{r echo=FALSE, Univariate_Plots}
+```{r echo=FALSE}
 ggplot(aes(alcohol), data = wine) +
   geom_histogram()
 ```
 大部分红酒的酒精浓度分布在9-12之间，浓度并不高。
 
 ## 质量柱状图
-```{r echo=FALSE, Univariate_Plots}
+```{r echo=FALSE}
 ggplot(aes(quality), data = wine) +
   geom_bar() +
   scale_x_continuous(breaks = seq(0, 8, 1))
@@ -137,7 +130,7 @@ ggplot(aes(quality), data = wine) +
 红酒的质量主要集中在中等质量5和6，质量特别差或特别好的红酒相对比较少，质量的分布接近正态分布。
 
 # 创建新变量，红酒质量评价
-```{r echo=FALSE, Univariate_Plots}
+```{r echo=FALSE}
 wine$rating[wine$quality <= 4] = 'Poor'
 wine$rating[wine$quality > 4 & wine$quality <= 6] = 'Good'
 wine$rating[wine$quality >= 7] = 'Excellent'
@@ -161,7 +154,7 @@ wine$rating[wine$quality >= 7] = 'Excellent'
 有一些变量的分布不是呈正态分布，如柠檬酸呈双峰分布，残糖呈明显的右偏分布。我对其变量对数转换，并清理异常值，因为我想检查对数转换后是否符合正态分布，这样就可以更好地认识变量的分布情况。
 
 # 双变量绘图选择
-```{r}
+```{r echo=FALSE}
 library(GGally)
 
 ggpairs(wine,
@@ -194,7 +187,7 @@ ggplot(wine,aes(x=factor(quality),y=volatile.acidity))+geom_jitter()+
 除了质量评分为8的红酒，质量与挥发酸的含量中位数呈负相关关系。
 
 ## 质量与柠檬酸的关系
-```{r echo=FALSE, Bivariate_Plots}
+```{r echo=FALSE}
 ggplot(wine,aes(x=factor(quality),y=citric.acid))+geom_jitter()+
   geom_boxplot(alpha=0.5,color='blue')+
   stat_summary(fun.y='median',
@@ -205,7 +198,7 @@ ggplot(wine,aes(x=factor(quality),y=citric.acid))+geom_jitter()+
 质量与柠檬酸的含量中位数呈正相关关系。
 
 ## 质量和硫化物的关系
-```{r echo=FALSE, Bivariate_Plots}
+```{r echo=FALSE}
 ggplot(wine,aes(x=factor(quality),y=sulphates))+geom_jitter()+
   geom_boxplot(alpha=0.5,color='blue')+
   stat_summary(fun.y='median',
@@ -216,7 +209,7 @@ ggplot(wine,aes(x=factor(quality),y=sulphates))+geom_jitter()+
 质量与硫化物含量的中位数呈正相关关系。
 
 ## 质量和酒精度数的关系
-```{r echo=FALSE, Bivariate_Plots}
+```{r echo=FALSE}
 ggplot(wine,aes(x=factor(quality),y=alcohol))+geom_jitter()+
   geom_boxplot(alpha=0.5,color='blue')+
   stat_summary(fun.y='median',
@@ -228,7 +221,7 @@ ggplot(wine,aes(x=factor(quality),y=alcohol))+geom_jitter()+
 
 ## 其他相关关系:
 ## 柠檬酸和固定酸的相关关系:
-```{r}
+```{r echo=FALSE}
 ggplot(wine, aes(citric.acid, fixed.acidity))+
   geom_jitter()+
   geom_smooth(method = 'lm', color = 'red')
@@ -236,7 +229,7 @@ ggplot(wine, aes(citric.acid, fixed.acidity))+
 柠檬酸和固定酸呈正相关。
 
 ## 柠檬酸和挥发酸的相关关系:
-```{r}
+```{r echo=FALSE}
 ggplot(wine, aes(citric.acid, volatile.acidity))+
   geom_jitter()+
   geom_smooth(method = 'lm', color = 'red')
@@ -244,7 +237,7 @@ ggplot(wine, aes(citric.acid, volatile.acidity))+
 柠檬酸和挥发酸呈负相关。
 
 ## 柠檬酸和PH值的相关关系:
-```{r}
+```{r echo=FALSE}
 ggplot(wine, aes(citric.acid, pH))+
   geom_jitter()+
   geom_smooth(method = 'lm', color = 'red')
@@ -252,7 +245,7 @@ ggplot(wine, aes(citric.acid, pH))+
 柠檬酸和PH值呈负相关。
 
 ## 固定酸和密度的相关关系:
-```{r}
+```{r echo=FALSE}
 ggplot(wine, aes(fixed.acidity, density))+
   geom_jitter()+
   geom_smooth(method = 'lm', color = 'red')
@@ -260,7 +253,7 @@ ggplot(wine, aes(fixed.acidity, density))+
 固定酸和密度呈正相关。
 
 ## 固定酸和PH值的相关关系:
-```{r}
+```{r echo=FALSE}
 ggplot(wine, aes(fixed.acidity, pH))+
   geom_jitter()+
   geom_smooth(method = 'lm', color = 'red')
@@ -268,7 +261,7 @@ ggplot(wine, aes(fixed.acidity, pH))+
 固定酸和ph值呈负相关。
 
 ## 总二氧化硫和游离二氧化硫的相关关系:
-```{r}
+```{r echo=FALSE}
 ggplot(wine, aes(total.sulfur.dioxide, free.sulfur.dioxide))+
   geom_jitter()+
   geom_smooth(method = 'lm', color = 'red')
@@ -276,7 +269,7 @@ ggplot(wine, aes(total.sulfur.dioxide, free.sulfur.dioxide))+
 总二氧化硫和游离二氧化硫呈正相关。
 
 ## 酒精和密度的相关关系:
-```{r}
+```{r echo=FALSE}
 ggplot(wine, aes(alcohol, density))+
   geom_jitter()+
   geom_smooth(method = 'lm', color = 'red')
@@ -287,7 +280,7 @@ ggplot(wine, aes(alcohol, density))+
 
 ### 探讨你在这部分探究中观察到的一些关系。这些感兴趣的特性与数据集内其他特性有什么区别？
 根据散点图矩阵图，观察到红酒质量与4个因素相关性比较大，分别是酒精浓度、挥发酸、硫化物和柠檬酸，它们的相关系数分别是0.48,-0.39,0.25,0.23。
-```{r}
+```{r echo=FALSE}
 cor.test(wine$quality, wine$alcohol)
 cor.test(wine$quality, wine$volatile.acidity)
 cor.test(wine$quality, wine$sulphates)
@@ -310,7 +303,7 @@ pH值和固定酸呈负相关。
 
 ### 你发现最强的关系是什么？
 最强相关的两个因素是固定酸和pH值,这两者的皮尔森相关系数约为-0.68.
-```{r}
+```{r echo=FALSE}
 cor.test(wine$pH, wine$fixed.acidity)
 ```
 # 多变量绘图选择
@@ -323,7 +316,7 @@ ggplot(aes(x = fixed.acidity, y = volatile.acidity), data = wine) +
 ```
 由图看出固定酸与挥发酸呈负相关，且质量较高的红酒分布在挥发酸较低的地方。
 
-```{r}
+```{r echo=FALSE}
 library(dplyr)
 
 fixed_volatile_groups = group_by(wine, volatile.acidity)
@@ -341,7 +334,7 @@ ggplot(aes(x= fixed.acidity_mean, y= volatile.acidity),
 对挥发酸为分组条件，取固定酸均值处理之后我们从图中可以更为明显的看到，质量较好的红酒主要分布在挥发性酸较低和固定酸较高的区域。而质量较差的红酒则更多集中在固定酸较低和挥发性酸较高的区域。
 
 
-```{r}
+```{r echo=FALSE}
 ggplot(aes(x= fixed.acidity, y= volatile.acidity), data = wine)+
   geom_point(aes(color = quality))+
   facet_wrap(~quality)
@@ -349,7 +342,7 @@ ggplot(aes(x= fixed.acidity, y= volatile.acidity), data = wine)+
 几乎是质量越好的红酒，含有的挥发性酸越较少。
 
 ## 柠檬酸和酸类在不同质量下的相关关系:
-```{r}
+```{r echo=FALSE}
 ggplot(aes(x= volatile.acidity, y= fixed.acidity), data = wine)+
   geom_point(aes(color = citric.acid))+
   facet_wrap(~quality)
@@ -357,7 +350,7 @@ ggplot(aes(x= volatile.acidity, y= fixed.acidity), data = wine)+
 高柠檬酸总出现在挥发酸少的区域,并倾向于出现在高固定酸区域。再一次确认了质量越高的红酒，其挥发酸含量越少。
 
 ## 总二氧化硫,游离二氧化硫和硫化物在不同质量下的相关关系:
-```{r}
+```{r echo=FALSE}
 ggplot(wine, aes(total.sulfur.dioxide, free.sulfur.dioxide))+
   geom_point(aes(color = sulphates))+
   facet_wrap(~quality)
@@ -365,7 +358,7 @@ ggplot(wine, aes(total.sulfur.dioxide, free.sulfur.dioxide))+
 总二氧化硫和游离二氧化硫正相关。
 
 ## 密度酒精和残糖在不同质量下的相关关系:
-```{r}
+```{r echo=FALSE}
 ggplot(wine, aes(density, alcohol))+
   geom_point(aes(color = residual.sugar))+
   facet_wrap(~quality)
@@ -373,7 +366,7 @@ ggplot(wine, aes(density, alcohol))+
 高质量酒出现在酒精度高区域,高残糖出现在高密度区域。
 
 ## 酒精和密度在不同质量下的相关关系:
-```{r}
+```{r echo=FALSE}
 ggplot(wine, aes(alcohol, density, color = factor(quality)))+
   geom_point(alpha = 0.5,
               size = 1,
@@ -456,3 +449,10 @@ ggplot(wine, aes(alcohol, density, color = factor(quality)))+
 ------
 
 # 反思
+数据探索分析是对数据的特征和关系进行数字的和图表的测试，这个过程我主要围绕了分析影响红酒质量比较大的几个变量，也分析了其他变量之间的关系。最终发现红酒质量相关性特别大的变量是密度和酒精浓度。分析过程中挑战比较大的是不了解变量的含义，特别是一些化学元素；但经过画图和使用变量的次数多了，就慢慢熟悉。而且分析过程依赖于散点图矩阵和相关系数较多，思路不够开阔。
+
+# reference
+- https://s3.amazonaws.com/content.udacity-data.com/courses/ud651/diamondsExample_2016-05.html
+- https://github.com/richard-renxin/P6_redwine
+- https://github.com/esskeetit0817/EDA-projcet
+- https://github.com/jtsou/Red-Wine-Analysis-with-R
