@@ -388,8 +388,17 @@ ggplot(wine, aes(alcohol, density, color = factor(quality)))+
 # 多变量分析
 
 ###  探讨你在这部分探究中观察到的一些关系。通过观察感兴趣的特性，是否存在相互促进的特性？
+质量较好的红酒主要分布在挥发性酸较低和固定酸较高的区域，而质量较差的红酒则更多集中在固定酸较低和挥发性酸较高的区域。
+总二氧化硫和游离二氧化硫正相关。
+高质量酒出现在酒精度高区域,高残糖出现在高密度区域。
+不同质量的红酒,都是酒精和密度呈负相关。
+
+猜测柠檬酸和固定酸有促进作用,总二氧化硫和游离二氧化硫有促进作用。
+猜测高残糖和低酒精浓度对高密度有促进作用。
 
 ### 这些特性之间是否存在有趣或惊人的联系呢？
+没有挥发酸和固定酸同时特别高的红酒,也许二者可以单向转化。
+密度也许由残糖和酒精浓度决定。
 
 ### 选项：你是否创建过数据集的任何模型？讨论你模型的优缺点。
 
@@ -399,27 +408,51 @@ ggplot(wine, aes(alcohol, density, color = factor(quality)))+
 
 ### 绘图一
 ```{r echo=FALSE, Plot_One}
-
+ggplot(wine, aes(factor(quality), alcohol))+
+  geom_jitter(alpha = 0.3)+
+  geom_boxplot(alpha = 0.5, color = 'blue')+
+  stat_summary(fun.y = 'mean',
+               geom = 'point',
+               color = 'red')+
+  geom_smooth(method = 'lm', aes(group = 1))+
+  xlab('质量等级')+
+  ylab('酒精度 mg/L')+
+  ggtitle('质量和酒精浓度的相关关系')
 ```
 
 ### 描述一
-
+酒精浓度越高往往对红酒质量越高。
 
 ### 绘图二
 ```{r echo=FALSE, Plot_Two}
-
+ggplot(wine, aes(fixed.acidity, volatile.acidity))+
+  geom_point(aes(color = citric.acid))+
+  facet_wrap(~quality)+
+  xlab('固定酸 mg/L')+
+  ylab('挥发酸 mg/L')+
+  ggtitle('固定酸,挥发酸和柠檬酸的相关关系')
 ```
 
 ### 描述二
-
+高柠檬酸总出现在挥发酸少的区域,并倾向于出现在高固定酸区域。
 
 ### 绘图三
 ```{r echo=FALSE, Plot_Three}
-
+ggplot(wine, aes(alcohol, density, color = factor(quality)))+
+  geom_point(alpha = 0.5,
+             size = 1,
+             position = 'jitter')+
+  geom_smooth(method = 'lm',
+              se = FALSE,
+              size = 1)+
+  scale_color_brewer(palette = 'Blues')+
+  xlab('酒精度 mg/L')+
+  ylab('密度 mg/L')+
+  ggtitle('不同质量下密度和酒精的相关关系')
 ```
 
 ### 描述三
-
+不同质量的红酒,都是酒精和密度呈负相关。
 ------
 
 # 反思
