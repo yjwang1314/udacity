@@ -1,5 +1,9 @@
 红酒数据集探索性数据分析
 ========================================================
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(message=FALSE, warning=FALSE, echo=FALSE)
+```
+
 ```{r echo=FALSE, message=FALSE, warning=FALSE, packages}
 # 加载你最终使用的所有组件
 # 在这个代码块的分析中。
@@ -168,12 +172,12 @@ wine$rating[wine$quality >= 7] = 'Excellent'
 有一些变量的分布不是呈正态分布，如柠檬酸呈双峰分布，残糖呈明显的右偏分布。我对其变量对数转换，并清理异常值，因为我想检查对数转换后是否符合正态分布，这样就可以更好地认识变量的分布情况。
 
 # 双变量绘图选择
-```{r echo=FALSE}
+```{r fig.width = 15, fig.height = 15, echo=FALSE}
 library(GGally)
 
 ggpairs(wine,
         lower = list(continuous = wrap("points", shape = I('.'))),
-        upper = list(combo = wrap("box", outlier.shape = I('.'))))
+        upper = list(continuous = wrap("cor", size = 3)))
 ```
 
 从散点图矩阵可以看出：
@@ -338,8 +342,11 @@ cor.test(wine$pH, wine$fixed.acidity)
 
 ## 固定酸和挥发酸在不同质量下的相关关系:
 ```{r echo=FALSE, Multivariate_Plots, warning=FALSE, message=FALSE}
-ggplot(aes(x = fixed.acidity, y = volatile.acidity), data = wine) +
-  geom_point(aes(color = quality))
+ggplot(aes(x = fixed.acidity, y = volatile.acidity, color=factor(quality)), data = wine) +
+  geom_point(alpha = 0.5,
+              size = 1,
+          position = 'jitter') + 
+  scale_color_brewer(palette = 'Blues')
 ```
 由图看出固定酸与挥发酸呈负相关，且质量较高的红酒分布在挥发酸较低的地方。
 
@@ -362,9 +369,10 @@ ggplot(aes(x= fixed.acidity_mean, y= volatile.acidity),
 对挥发酸为分组条件，取固定酸均值处理之后我们从图中可以更为明显的看到，质量较好的红酒主要分布在挥发性酸较低和固定酸较高的区域。而质量较差的红酒则更多集中在固定酸较低和挥发性酸较高的区域。
 
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
-ggplot(aes(x= fixed.acidity, y= volatile.acidity), data = wine)+
-  geom_point(aes(color = quality))+
-  facet_wrap(~quality)
+ggplot(aes(x= fixed.acidity, y= volatile.acidity, color = factor(quality)), data = wine)+
+  geom_point()+
+  facet_wrap(~quality) +
+  scale_color_brewer(palette = 'Blues')
 ```
 
 几乎是质量越好的红酒，含有的挥发性酸越较少。
@@ -483,6 +491,8 @@ ggplot(wine, aes(alcohol, density, color = factor(quality)))+
 
 # 反思
 数据探索分析是对数据的特征和关系进行数字的和图表的测试，这个过程我主要围绕了分析影响红酒质量比较大的几个变量，也分析了其他变量之间的关系。最终发现红酒质量相关性特别大的变量是密度和酒精浓度。分析过程中挑战比较大的是不了解变量的含义，特别是一些化学元素；但经过画图和使用变量的次数多了，就慢慢熟悉。而且分析过程依赖于散点图矩阵和相关系数较多，思路不够开阔。
+
+利用这些数据将来还可以做进一步分析，例如用机器学习的算法构建一个合理的红酒质量的预测模型，输入密度、酒精浓度等变量，得到红酒质量的预测结果。
 
 # reference
 - https://s3.amazonaws.com/content.udacity-data.com/courses/ud651/diamondsExample_2016-05.html
